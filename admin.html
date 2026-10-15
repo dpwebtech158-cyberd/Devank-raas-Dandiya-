@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Event Entries Admin | Raas Dandiya</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Montserrat:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="main.css">
+</head>
+
+<body class="admin-page">
+  <nav class="nav">
+    <a class="logo" href="/">💃 RAAS DANDIYA</a>
+    <a class="admin-home-link" href="/">EVENT SITE</a>
+  </nav>
+
+  <main class="admin-main">
+    <header class="admin-header">
+      <div class="tag">PRIVATE ORGANIZER VIEW</div>
+      <h1>Event Entries</h1>
+      <p>Registration and lucky draw entries are visible only to authorized organizers.</p>
+    </header>
+
+    <form class="admin-login" id="adminLogin">
+      <label for="adminToken">ADMIN ACCESS TOKEN</label>
+      <input id="adminToken" name="token" type="password" autocomplete="current-password"
+        placeholder="Enter the admin token" maxlength="256" required>
+      <button class="btn" type="submit">VIEW EVENT ENTRIES</button>
+    </form>
+    <p class="admin-status" id="adminStatus" role="status" aria-live="polite"></p>
+
+    <section class="admin-results" id="adminResults" hidden aria-label="Event entries">
+      <div class="admin-results-header">
+        <h2>Event entries</h2>
+        <button class="admin-logout" id="adminLogout" type="button">LOG OUT</button>
+      </div>
+      <div class="admin-section-heading">
+        <h2 class="admin-subheading">Registrations</h2>
+        <button class="admin-export" id="exportRegistrations" type="button">EXPORT TO EXCEL (CSV)</button>
+      </div>
+      <p class="admin-status" id="registrationExportStatus" role="status" aria-live="polite"></p>
+      <div class="registration-list" id="registrationList"></div>
+      <button class="btn admin-load-more" id="loadMore" type="button" hidden>LOAD MORE</button>
+
+      <div class="admin-dataset">
+        <div class="admin-results-header">
+          <h2>Lucky draw entries</h2>
+          <button class="admin-export" id="exportLuckyDraw" type="button">EXPORT TO EXCEL (CSV)</button>
+        </div>
+        <p class="admin-status" id="luckyDrawExportStatus" role="status" aria-live="polite"></p>
+        <p class="admin-status" id="luckyDrawStatus" role="status" aria-live="polite"></p>
+        <div class="registration-list" id="luckyDrawList"></div>
+        <button class="btn admin-load-more" id="luckyDrawLoadMore" type="button" hidden>LOAD MORE</button>
+        <section class="lucky-draw-admin" aria-labelledby="luckyDrawAdminHeading">
+          <h3 id="luckyDrawAdminHeading">Draw lucky winners</h3>
+          <label for="luckyDrawWinnerCount">NUMBER OF WINNERS</label>
+          <input id="luckyDrawWinnerCount" type="number" min="1" max="500" step="1" value="3">
+          <div class="lucky-draw-admin-actions">
+            <button class="btn" id="drawLuckyWinners" type="button">DRAW WINNERS</button>
+            <button class="admin-export" id="resetLuckyDraw" type="button">RESET DRAW</button>
+          </div>
+          <p class="admin-status" id="luckyDrawResultStatus" role="status" aria-live="polite"></p>
+          <div class="registration-list" id="luckyDrawWinners"></div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const loginForm = document.getElementById('adminLogin');
+    const tokenInput = document.getElementById('adminToken');
+    const statusMessage = document.getElementById('adminStatus');
+    const resultsSection = document.getElementById('adminResults');
+    const registrationList = document.getElementById('registrationList');
+    const loadMoreButton = document.getElementById('loadMore');
+    const luckyDrawStatus = document.getElementById('luckyDrawStatus');
+    const luckyDrawList = document.getElementById('luckyDrawList');
+    const luckyDrawLoadMoreButton = document.getElementById('luckyDrawLoadMore');
+    const luckyDrawWinnerCountInput = document.getElementById('luckyDrawWinnerCount');
+    const drawLuckyWinnersButton = document.getElementById('drawLuckyWinners');
+    const resetLuckyDrawButton = document.getElementById('resetLuckyDraw');
+    const luckyDrawResultStatus = document.getElementById('luckyDrawResultStatus');
+    const luckyDrawWinners = document.getElementById('luckyDrawWinners');
+    const exportRegistrationsButton = document.getElementById('exportRegistrations');
+    const exportLuckyDrawButton = document.getElementById('exportLuckyDraw');
+    const registrationExportStatus = document.getElementById('registrationExportStatus');
+    const luckyDrawExportStatus = document.getElementById('luckyDrawExportStatus');
+    let adminToken = '';
+    let nextBefore = null;
+    let nextLuckyDrawBefore = null;
+    let luckyDrawRefreshTimer = null;
+
+    function setStatus(message, isError = false) {
+      statusMessage.textContent = message;
+      statusMessage.classList.toggle('error', isError);
+    }
+
+    function setLuckyDrawStatus(message, isError = false) {
+      luckyDrawStatus.textContent = message;
+      luckyDrawStatus.classList.toggle('error', isError);
+    }
+
+    function setExportStatus(element, message, isError = false) {
+      element.textContent = message;
+      element.classList.toggle('error', isError);
+    }
+
+    function clearUnauthorizedSession() {
+      clearInterval(luckyDrawRefreshTimer);
+      luckyDrawRefreshTimer = null;
+      adminToken = '';
+      registrationList.replaceChildren();
+      luckyDrawList.replaceChildren();
+      luckyDrawWinners.replaceChildren();
+      resultsSection.hidden = true;
+      loginForm.hidden = false;
+      tokenInput.value = '';
+    }
+
+    function addRegistrationCard(registration) {
+      const card = document.createElement('article');
+      card.className = 'registration-card';
+
+      const heading = document.createElement('div');
+      heading.className = 'registration-card-heading';
+      const name = document.createElement('h3');
+      name.textContent = registration.name;
+      const id = document.createElement('span');
+      id.textContent = `#${registration.id}`;
+      heading.append(name, id);
+      card.append(heading);
+
+      const details = [
+        ['Mobile', registration.mobile],
+        ['Type', registration.type],
+        ['Participants', String(registration.participants)],
+        ['Email', registration.email || 'Not provided'],
+        ['Submitted', new Date(`${registration.createdAt.replace(' ', 'T')}Z`).toLocaleString()]
+      ];
+      const list = document.createElement('dl');
+      list.className = 'registration-details';
+      for (const [label, value] of details) {
+        const row = document.createElement('div');
+        const term = document.createElement('dt');
+        const description = document.createElement('dd');
+        term.textContent = label;
+        description.textContent = value;
+        row.append(term, description);
+        list.append(row);
+      }
+      card.append(list);
+
+      const deleteButton = document.createElement('button');
+      deleteButton.className = 'registration-delete';
+      deleteButton.type = 'button';
+      deleteButton.textContent = 'DELETE REGISTRATION';
+      deleteButton.setAttribute('aria-label', `Delete registration for ${registration.name}`);
+      deleteButton.addEventListener('click', () => deleteRegistration(registration.id, card, deleteButton));
+      card.append(deleteButton);
+      registrationList.append(card);
+    }
+
+    function addLuckyDrawCard(entry) {
+      const card = document.createElement('article');
+      card.className = 'registration-card';
+
+      const heading = document.createElement('div');
+      heading.className = 'registration-card-heading';
+      const name = document.createElement('h3');
+      name.textContent = entry.name;
+      const id = document.createElement('span');
+      id.textContent = `#${entry.id}`;
+      heading.append(name, id);
+      card.append(heading);
+
+      const list = document.createElement('dl');
+      list.className = 'registration-details';
+      for (const [label, value] of [
+        ['Mobile', entry.mobile],
+        ['Email', entry.email || 'Not provided'],
+        ['Submitted', new Date(`${entry.createdAt.replace(' ', 'T')}Z`).toLocaleString()]
+      ]) {
+        const row = document.createElement('div');
+        const term = document.createElement('dt');
+        const description = document.createElement('dd');
+        term.textContent = label;
+        description.textContent = value;
+        row.append(term, description);
+        list.append(row);
+      }
+      card.append(list);
+
+      const deleteButton = document.createElement('button');
+      deleteButton.className = 'registration-delete';
+      deleteButton.type = 'button';
+      deleteButton.textContent = 'DELETE LUCKY DRAW ENTRY';
+      deleteButton.setAttribute('aria-label', `Delete lucky draw entry for ${entry.name}`);
+      deleteButton.addEventListener('click', () => deleteLuckyDrawEntry(entry.id, card, deleteButton));
+      card.append(deleteButton);
+      luckyDrawList.append(card);
+    }
+
+    async function deleteLuckyDrawEntry(id, card, button) {
+      if (!window.confirm('Delete this lucky draw entry? It will be retained but hidden from the active list.')) return;
+
+      button.disabled = true;
+      button.textContent = 'DELETING…';
+      setLuckyDrawStatus('Deleting lucky draw entry…');
+      try {
+        const url = new URL('/api/lucky-draw', window.location.origin);
+        url.searchParams.set('id', id);
+        const response = await fetch(url, {
+          method: 'DELETE',
+          headers: { Authorization: 'Bearer ' + adminToken }
+        });
+        const result = await response.json();
+        if (!response.ok) {
+          if (response.status === 401) clearUnauthorizedSession();
+          throw new Error(result.error || 'Could not delete this lucky draw entry.');
+        }
+
+        card.remove();
+        setLuckyDrawStatus(luckyDrawList.childElementCount ? 'Lucky draw entry deleted.' : 'No active lucky draw entries remain.');
+      } catch (error) {
+        setLuckyDrawStatus(error.message, true);
+        button.disabled = false;
+        button.textContent = 'DELETE LUCKY DRAW ENTRY';
+      }
+    }
+
+    async function deleteRegistration(id, card, button) {
+      if (!window.confirm('Delete this registration? It will be hidden from the active registration list.')) return;
+
+      button.disabled = true;
+      button.textContent = 'DELETING…';
+      setStatus('Deleting registration…');
+      try {
+        const url = new URL('/api/registrations', window.location.origin);
+        url.searchParams.set('id', id);
+        const response = await fetch(url, {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${adminToken}` }
+        });
+        const result = await response.json();
+        if (!response.ok) {
+          if (response.status === 401) {
+            clearUnauthorizedSession();
+          }
+          throw new Error(result.error || 'Could not delete this registration.');
+        }
+
+        card.remove();
+        setStatus(registrationList.childElementCount ? 'Registration deleted.' : 'No active registrations remain.');
+      } catch (error) {
+        setStatus(error.message, true);
+        button.disabled = false;
+        button.textContent = 'DELETE REGISTRATION';
+      }
+    }
+
+    async function loadRegistrations(append = false) {
+      const url = new URL('/api/registrations', window.location.origin);
+      if (append && nextBefore !== null) url.searchParams.set('before', nextBefore);
+
+      loadMoreButton.disabled = true;
+      setStatus('Loading registrations…');
+      try {
+        const response = await fetch(url, {
+          headers: { Authorization: `Bearer ${adminToken}` }
+        });
+        const result = await response.json();
+        if (!response.ok) {
+          if (response.status === 401) {
+            clearUnauthorizedSession();
+          }
+          throw new Error(result.error || 'Could not load registrations.');
+        }
+
+        if (!append) registrationList.replaceChildren();
+        result.registrations.forEach(addRegistrationCard);
+        nextBefore = result.nextBefore;
+        loadMoreButton.hidden = nextBefore === null;
+        resultsSection.hidden = false;
+        loginForm.hidden = true;
+        setStatus(result.registrations.length ? '' : 'No active registrations have been submitted yet.');
+      } catch (error) {
+        setStatus(error.message, true);
+        if (!adminToken) {
+          loginForm.hidden = false;
+          tokenInput.value = '';
+          tokenInput.focus();
+        }
+      } finally {
+        loadMoreButton.disabled = false;
+      }
+    }
+
+    function renderLuckyDrawState(state) {
+      const hadWinners = luckyDrawWinners.childElementCount > 0;
+      if (state.winnerCount > 0) {
+        luckyDrawWinnerCountInput.value = state.winnerCount;
+      } else if (hadWinners) {
+        luckyDrawWinnerCountInput.value = '';
+      }
+      luckyDrawWinners.replaceChildren();
+
+      for (const winner of state.winners) {
+        const card = document.createElement('article');
+        card.className = 'registration-card';
+        const heading = document.createElement('div');
+        heading.className = 'registration-card-heading';
+        const name = document.createElement('h3');
+        name.textContent = `${winner.position}. ${winner.name}`;
+        const id = document.createElement('span');
+        id.textContent = `#${winner.id}`;
+        heading.append(name, id);
+        card.append(heading);
+
+        const details = document.createElement('dl');
+        details.className = 'registration-details';
+        for (const [label, value] of [
+          ['Mobile', winner.mobile],
+          ['Email', winner.email || 'Not provided'],
+          ['Drawn', new Date(`${winner.drawnAt.replace(' ', 'T')}Z`).toLocaleString()]
+        ]) {
+          const row = document.createElement('div');
+          const term = document.createElement('dt');
+          const description = document.createElement('dd');
+          term.textContent = label;
+          description.textContent = value;
+          row.append(term, description);
+          details.append(row);
+        }
+        card.append(details);
+        luckyDrawWinners.append(card);
+      }
+
+      if (state.winners.length) {
+        luckyDrawResultStatus.textContent =
+          `${state.winners.length} winner${state.winners.length === 1 ? '' : 's'} saved. Other admin browsers refresh automatically.`;
+      } else {
+        luckyDrawResultStatus.textContent = 'No winners have been drawn.';
+      }
+      luckyDrawResultStatus.classList.remove('error');
+    }
+
+    async function loadLuckyDrawState(quiet = false) {
+      if (!adminToken) return;
+      try {
+        const response = await fetch('/api/lucky-draw-state', {
+          headers: { Authorization: `Bearer ${adminToken}` }
+        });
+        const result = await response.json();
+        if (!response.ok) {
+          if (response.status === 401) clearUnauthorizedSession();
+          throw new Error(result.error || 'Could not load the saved lucky draw.');
+        }
+        renderLuckyDrawState(result);
+      } catch (error) {
+        if (!quiet) {
+          luckyDrawResultStatus.textContent = error.message;
+          luckyDrawResultStatus.classList.add('error');
+        }
+      }
+    }
+
+    async function submitLuckyDrawAction(action) {
+      const isReset = action === 'reset';
+      if (isReset && !window.confirm('Reset the saved lucky draw winners? This allows a new draw.')) return;
+
+      drawLuckyWinnersButton.disabled = true;
+      resetLuckyDrawButton.disabled = true;
+      luckyDrawResultStatus.textContent = isReset ? 'Resetting the saved draw…' : 'Drawing winners…';
+      luckyDrawResultStatus.classList.remove('error');
+      try {
+        const body = { action };
+        if (!isReset) body.winnerCount = Number(luckyDrawWinnerCountInput.value);
+        const response = await fetch('/api/lucky-draw-state', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${adminToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        });
+        const result = await response.json();
+        if (!response.ok) {
+          if (response.status === 401) clearUnauthorizedSession();
+          throw new Error(result.error || 'Could not update the lucky draw.');
+        }
+        renderLuckyDrawState(result);
+      } catch (error) {
+        luckyDrawResultStatus.textContent = error.message;
+        luckyDrawResultStatus.classList.add('error');
+      } finally {
+        drawLuckyWinnersButton.disabled = false;
+        resetLuckyDrawButton.disabled = false;
+      }
+    }
+
+    async function loadLuckyDrawEntries(append = false) {
+      const url = new URL('/api/lucky-draw', window.location.origin);
+      if (append && nextLuckyDrawBefore !== null) {
+        url.searchParams.set('before', nextLuckyDrawBefore);
+      }
+      luckyDrawLoadMoreButton.disabled = true;
+      setLuckyDrawStatus('Loading lucky draw entries…');
+      try {
+        const response = await fetch(url, {
+          headers: { Authorization: `Bearer ${adminToken}` }
+        });
+        const result = await response.json();
+        if (!response.ok) {
+          if (response.status === 401) clearUnauthorizedSession();
+          throw new Error(result.error || 'Could not load lucky draw entries.');
+        }
+
+        if (!append) luckyDrawList.replaceChildren();
+        result.entries.forEach(addLuckyDrawCard);
+        nextLuckyDrawBefore = result.nextBefore;
+        luckyDrawLoadMoreButton.hidden = nextLuckyDrawBefore === null;
+        resultsSection.hidden = false;
+        loginForm.hidden = true;
+        setLuckyDrawStatus(result.entries.length ? '' : 'No lucky draw entries have been submitted yet.');
+      } catch (error) {
+        setLuckyDrawStatus(error.message, true);
+        if (!adminToken) {
+          loginForm.hidden = false;
+          tokenInput.value = '';
+          tokenInput.focus();
+        }
+      } finally {
+        luckyDrawLoadMoreButton.disabled = false;
+      }
+    }
+
+    async function fetchAllEntries(endpoint, key) {
+      const entries = [];
+      let before = null;
+
+      do {
+        const url = new URL(endpoint, window.location.origin);
+        if (before !== null) url.searchParams.set('before', before);
+        const response = await fetch(url, {
+          headers: { Authorization: `Bearer ${adminToken}` }
+        });
+        const result = await response.json();
+        if (!response.ok) {
+          if (response.status === 401) clearUnauthorizedSession();
+          throw new Error(result.error || 'Could not load entries for export.');
+        }
+
+        entries.push(...result[key]);
+        before = result.nextBefore;
+      } while (before !== null);
+
+      return entries;
+    }
+
+    function csvCell(value) {
+      let text = String(value ?? '');
+      if (/^[\s]*[=+\-@\t\r]/.test(text)) text = `'${text}`;
+      return `"${text.replaceAll('"', '""')}"`;
+    }
+
+    function downloadCsv(filename, columns, rows) {
+      const content = [
+        columns.map(csvCell).join(','),
+        ...rows.map(row => row.map(csvCell).join(','))
+      ].join('\r\n');
+      const blob = new Blob(['\uFEFF', content], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 0);
+    }
+
+    async function exportEntries({ button, status, endpoint, key, filename, columns, mapRow }) {
+      button.disabled = true;
+      setExportStatus(status, 'Preparing Excel-compatible CSV…');
+      try {
+        const entries = await fetchAllEntries(endpoint, key);
+        downloadCsv(filename, columns, entries.map(mapRow));
+        setExportStatus(status, `Exported ${entries.length} ${entries.length === 1 ? 'entry' : 'entries'}.`);
+      } catch (error) {
+        setExportStatus(status, error.message, true);
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    exportRegistrationsButton.addEventListener('click', () => exportEntries({
+      button: exportRegistrationsButton,
+      status: registrationExportStatus,
+      endpoint: '/api/registrations',
+      key: 'registrations',
+      filename: 'raas-dandiya-registrations.csv',
+      columns: ['ID', 'Name', 'Mobile', 'Type', 'Participants', 'Email', 'Submitted'],
+      mapRow: entry => [
+        entry.id,
+        entry.name,
+        entry.mobile,
+        entry.type,
+        entry.participants,
+        entry.email || '',
+        entry.createdAt
+      ]
+    }));
+
+    exportLuckyDrawButton.addEventListener('click', () => exportEntries({
+      button: exportLuckyDrawButton,
+      status: luckyDrawExportStatus,
+      endpoint: '/api/lucky-draw',
+      key: 'entries',
+      filename: 'raas-dandiya-lucky-draw.csv',
+      columns: ['ID', 'Name', 'Mobile', 'Email', 'Submitted'],
+      mapRow: entry => [
+        entry.id,
+        entry.name,
+        entry.mobile,
+        entry.email || '',
+        entry.createdAt
+      ]
+    }));
+
+    loginForm.addEventListener('submit', event => {
+      event.preventDefault();
+      adminToken = tokenInput.value.trim();
+      if (!adminToken) {
+        setStatus('Enter the admin access token to continue.', true);
+        return;
+      }
+      nextBefore = null;
+      nextLuckyDrawBefore = null;
+      loadRegistrations();
+      loadLuckyDrawEntries();
+      loadLuckyDrawState();
+      clearInterval(luckyDrawRefreshTimer);
+      luckyDrawRefreshTimer = setInterval(() => loadLuckyDrawState(true), 5000);
+    });
+
+    loadMoreButton.addEventListener('click', () => loadRegistrations(true));
+    luckyDrawLoadMoreButton.addEventListener('click', () => loadLuckyDrawEntries(true));
+    drawLuckyWinnersButton.addEventListener('click', () => submitLuckyDrawAction('draw'));
+    resetLuckyDrawButton.addEventListener('click', () => submitLuckyDrawAction('reset'));
+
+    document.getElementById('adminLogout').addEventListener('click', () => {
+      clearInterval(luckyDrawRefreshTimer);
+      luckyDrawRefreshTimer = null;
+      adminToken = '';
+      nextBefore = null;
+      nextLuckyDrawBefore = null;
+      registrationList.replaceChildren();
+      luckyDrawList.replaceChildren();
+      luckyDrawWinners.replaceChildren();
+      resultsSection.hidden = true;
+      loginForm.hidden = false;
+      tokenInput.value = '';
+      setStatus('You have been logged out.');
+      setLuckyDrawStatus('');
+      luckyDrawResultStatus.textContent = '';
+      tokenInput.focus();
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,1290 @@
+:root {
+    --bg: #16091f;
+    --bg2: #260d32;
+    --pink: #ff3d81;
+    --orange: #ff781f;
+    --gold: #ffc857;
+    --cream: #fff3d6;
+    --muted: #d4c4d7;
+    --turmeric: #ffb52e;
+    --border: rgba(255, 200, 87, .2)
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0
+}
+
+html {
+    scroll-behavior: smooth;
+    background: #0d0612
+}
+
+body {
+    font-family: Montserrat, Arial, sans-serif;
+    background: var(--bg);
+    color: #fff;
+    overflow-x: hidden;
+    width: min(100%, 480px);
+    min-height: 100vh;
+    margin-inline: auto;
+    box-shadow: 0 0 0 1px rgba(255, 200, 87, .18), 0 0 80px rgba(255, 61, 129, .12)
+}
+
+body:before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -3;
+    background: radial-gradient(circle at 8% 12%, #a4176855, transparent 32%), radial-gradient(circle at 92% 18%, #f0781238, transparent 30%), radial-gradient(circle at 50% 100%, #6e1d8166, transparent 38%)
+}
+
+body:after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    opacity: .13;
+    pointer-events: none;
+    background-image: radial-gradient(#fff 1px, transparent 1px);
+    background-size: 38px 38px
+}
+
+a {
+    text-decoration: none;
+    color: inherit
+}
+
+.nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(22, 9, 31, .88);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border)
+}
+
+.logo {
+    font-weight: 800;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--gold);
+    white-space: nowrap
+}
+
+.navlinks {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 700
+}
+
+.navlinks a:not(.btn) {
+    display: none
+}
+
+.navlinks .btn {
+    padding: 10px 13px;
+    font-size: 10px;
+    white-space: nowrap
+}
+
+.navlinks a:hover {
+    color: var(--gold)
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 999px;
+    padding: 14px 23px;
+    background: linear-gradient(120deg, #ffe080, var(--turmeric) 55%, var(--orange));
+    color: #35101f;
+    font-weight: 800;
+    box-shadow: 0 12px 35px #ff781f38;
+    cursor: pointer;
+    transition: .25s
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 42px #ff781f55
+}
+
+.hero {
+    min-height: min(780px, 100svh);
+    padding: 54px 22px 58px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 28px;
+    align-items: center;
+    position: relative
+}
+
+.hero-copy {
+    max-width: 700px
+}
+
+.kicker {
+    font-size: 10px;
+    letter-spacing: 2.2px;
+    color: var(--gold);
+    font-weight: 800
+}
+
+.hero h1 {
+    font-family: "Baloo 2";
+    font-size: clamp(48px, 13vw, 60px);
+    line-height: .9;
+    margin: 18px 0;
+    background: linear-gradient(110deg, #fff7e8 8%, #ffd66e 48%, #ff781f 78%, #ff3d81);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent
+}
+
+.hero h1 small {
+    display: block;
+    font-size: .4em;
+    line-height: 1.1;
+    color: #fff;
+    -webkit-text-fill-color: #fff;
+    margin-top: 14px
+}
+
+.hero p {
+    color: #d5cbdc;
+    line-height: 1.7;
+    max-width: 590px;
+    font-size: 14px
+}
+
+.date {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin: 20px 0
+}
+
+.date strong {
+    font-size: 17px;
+    color: var(--gold)
+}
+
+.date span {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #bdb3c8
+}
+
+.actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 13px;
+    flex-wrap: wrap
+}
+
+.actions .btn {
+    width: 100%;
+    padding: 13px 16px
+}
+
+.ghost {
+    border: 1px solid rgba(255, 200, 87, .55);
+    background: rgba(255, 255, 255, .06);
+    color: #fff;
+    box-shadow: none
+}
+
+.hero-poster {
+    position: relative;
+    max-width: 560px;
+    margin: auto
+}
+
+.hero-poster:before {
+    content: "";
+    position: absolute;
+    inset: 8% -8% -7%;
+    background: linear-gradient(135deg, var(--pink), var(--orange), var(--gold));
+    filter: blur(75px);
+    opacity: .28;
+    z-index: -1
+}
+
+.hero-poster img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    border-radius: 30px;
+    border: 1px solid rgba(255, 200, 87, .48);
+    box-shadow: 0 35px 90px #000b
+}
+
+.scroll {
+    position: absolute;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: #c7b7ca
+}
+
+section {
+    padding: 66px 20px
+}
+
+.wrap {
+    max-width: 1180px;
+    margin: auto
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 30px
+}
+
+.section-title .tag {
+    color: var(--gold);
+    font-size: 10px;
+    letter-spacing: 2px;
+    font-weight: 800
+}
+
+.section-title h2 {
+    font-family: "Baloo 2";
+    font-size: clamp(36px, 8vw, 42px);
+    line-height: .95;
+    margin: 10px 0
+}
+
+.section-title p {
+    max-width: 390px;
+    margin: auto;
+    color: var(--muted);
+    line-height: 1.7
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px
+}
+
+.card {
+    padding: 22px;
+    border-radius: 25px;
+    border: 1px solid rgba(255, 200, 87, .16);
+    background: linear-gradient(145deg, rgba(255, 255, 255, .07), rgba(116, 32, 97, .12));
+    text-align: center;
+    transition: .3s
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(255, 200, 87, .62);
+    box-shadow: 0 14px 35px rgba(255, 61, 129, .08)
+}
+
+.icon {
+    font-size: 37px;
+    margin-bottom: 10px
+}
+
+.card h3 {
+    font-family: "Baloo 2";
+    font-size: 23px;
+    color: var(--gold)
+}
+
+.card p {
+    margin-top: 6px;
+    font-weight: 700
+}
+
+.card small {
+    display: block;
+    color: #c0afc5;
+    margin-top: 8px
+}
+
+.venue-box {
+    max-width: 760px;
+    margin: 0 auto
+}
+
+.venue-card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: 34px 22px 30px;
+    border-radius: 30px;
+    border: 1px solid rgba(255, 200, 87, .48);
+    background:
+        radial-gradient(ellipse at 50% 0%, rgba(255, 200, 87, .19), transparent 48%),
+        linear-gradient(145deg, #35103f, #1d0b2a 64%, #42152d);
+    box-shadow: 0 22px 55px rgba(0, 0, 0, .3), inset 0 0 35px rgba(255, 200, 87, .035);
+    text-align: center
+}
+
+.venue-card:before,
+.venue-card:after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    width: 190px;
+    height: 190px;
+    border: 1px solid rgba(255, 200, 87, .13);
+    border-radius: 50%;
+    pointer-events: none
+}
+
+.venue-card:before {
+    top: -115px;
+    left: -100px;
+    box-shadow: 0 0 0 16px rgba(255, 200, 87, .025), 0 0 0 34px rgba(255, 200, 87, .02)
+}
+
+.venue-card:after {
+    right: -120px;
+    bottom: -130px;
+    box-shadow: 0 0 0 16px rgba(255, 61, 129, .035), 0 0 0 34px rgba(255, 61, 129, .025)
+}
+
+.venue-pin {
+    display: grid;
+    place-items: center;
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 18px;
+    border: 1px solid rgba(255, 224, 128, .72);
+    border-radius: 50%;
+    background: linear-gradient(145deg, rgba(255, 200, 87, .22), rgba(255, 61, 129, .16));
+    box-shadow: 0 0 0 8px rgba(255, 200, 87, .055), 0 0 32px rgba(255, 120, 31, .2);
+    font-size: 32px
+}
+
+.venue-eyebrow {
+    color: var(--gold);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 2.2px
+}
+
+.venue-card h3 {
+    font-family: "Baloo 2";
+    font-size: clamp(42px, 10vw, 54px);
+    line-height: 1.05;
+    margin-top: 8px;
+    background: linear-gradient(110deg, #fff3d6, #ffd66e 48%, #ff9b42);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent
+}
+
+.venue-card .venue-city {
+    margin-top: 3px;
+    color: #e8d8ef;
+    font-size: 14px;
+    letter-spacing: 2px
+}
+
+.venue-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: min(230px, 75%);
+    margin: 22px auto 17px;
+    color: var(--gold);
+    font-size: 12px
+}
+
+.venue-divider:before,
+.venue-divider:after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 200, 87, .6))
+}
+
+.venue-divider:after {
+    transform: rotate(180deg)
+}
+
+.venue-details {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 22px
+}
+
+.venue-details span {
+    padding: 8px 11px;
+    border: 1px solid rgba(255, 200, 87, .24);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .045);
+    color: #f4e8ef;
+    font-size: 10px;
+    font-weight: 700
+}
+
+.venue-map-link {
+    min-width: min(100%, 220px);
+    border: 1px solid rgba(255, 224, 128, .7);
+    background: linear-gradient(120deg, rgba(255, 224, 128, .14), rgba(255, 120, 31, .12));
+    color: #fff3d6;
+    box-shadow: 0 8px 24px rgba(255, 120, 31, .14)
+}
+
+.venue-map-link:hover {
+    background: linear-gradient(120deg, rgba(255, 224, 128, .24), rgba(255, 120, 31, .2))
+}
+
+.venue-spark {
+    position: absolute;
+    color: var(--gold);
+    text-shadow: 0 0 14px rgba(255, 200, 87, .65);
+    pointer-events: none
+}
+
+.venue-spark-one {
+    top: 35px;
+    left: 14%;
+    font-size: 18px
+}
+
+.venue-spark-two {
+    top: 66px;
+    right: 14%;
+    color: #ff8ab5;
+    font-size: 22px
+}
+
+.prizes {
+    background: linear-gradient(180deg, transparent, #56164b35 45%, #6d2a1530, transparent)
+}
+
+.prizegrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px
+}
+
+.prize {
+    position: relative;
+    overflow: hidden;
+    padding: 22px;
+    border-radius: 25px;
+    background: linear-gradient(145deg, rgba(128, 34, 99, .56), rgba(105, 42, 37, .48));
+    border: 1px solid rgba(255, 200, 87, .28);
+    text-align: center
+}
+
+.prize.featured {
+    background: linear-gradient(145deg, rgba(255, 181, 46, .2), rgba(255, 61, 129, .15));
+    border-color: rgba(255, 200, 87, .58);
+    box-shadow: 0 14px 40px rgba(255, 61, 129, .08)
+}
+
+.medal {
+    font-size: 37px
+}
+
+.prize .label {
+    color: var(--gold);
+    font-size: 10px;
+    letter-spacing: 2px;
+    font-weight: 800
+}
+
+.prize h3 {
+    font-family: "Baloo 2";
+    font-size: 31px;
+    margin: 5px 0
+}
+
+.prize p {
+    color: #e0d2df;
+    font-size: 13px
+}
+
+.lucky-draw-cta {
+    margin-top: 0;
+    padding: 26px 20px;
+    border: 1px solid rgba(255, 200, 87, .48);
+    border-radius: 22px;
+    background: linear-gradient(135deg, rgba(255, 200, 87, .14), rgba(255, 61, 129, .16));
+    box-shadow: 0 16px 40px rgba(0, 0, 0, .2);
+    text-align: center
+}
+
+.lucky-draw-cta p {
+    color: #e0d2df;
+    line-height: 1.7;
+    max-width: 540px;
+    margin: 0 auto 18px;
+    font-weight: 600
+}
+
+.lucky-draw-count {
+    color: var(--gold);
+    font-size: 1.15em;
+    font-weight: 800
+}
+
+.banner {
+    margin: 10px 14px 0;
+    border-radius: 25px;
+    padding: 46px 24px;
+    background: linear-gradient(115deg, #4c125f, #9d1f61 52%, #c94b18);
+    position: relative;
+    overflow: hidden
+}
+
+.banner:after {
+    content: "💃";
+    position: absolute;
+    right: 8%;
+    bottom: -35px;
+    font-size: 180px;
+    opacity: .13;
+    pointer-events: none
+}
+
+.banner > * {
+    position: relative;
+    z-index: 1
+}
+
+.banner .kicker {
+    display: block;
+    margin-bottom: 14px;
+    line-height: 1.4
+}
+
+.banner h2 {
+    font-family: "Baloo 2";
+    font-size: clamp(36px, 8vw, 44px);
+    line-height: 1.08;
+    margin-bottom: 12px
+}
+
+.banner h2 span {
+    color: var(--gold)
+}
+
+.banner p {
+    margin: 15px 0 24px;
+    max-width: 600px;
+    color: #eee;
+    line-height: 1.7
+}
+
+.formbox {
+    max-width: 900px;
+    margin: auto;
+    background: linear-gradient(145deg, rgba(255, 255, 255, .065), rgba(118, 37, 102, .09));
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 22px 16px
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px
+}
+
+.field {
+    margin-bottom: 17px
+}
+
+.field label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #ddd;
+    display: block;
+    margin-bottom: 7px
+}
+
+.field input,
+.field select,
+.field textarea {
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, .17);
+    background: #1b0c25;
+    color: #fff;
+    border-radius: 13px;
+    padding: 14px 12px;
+    font-size: 16px;
+    font: inherit;
+    outline: 0
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(255, 200, 87, .12)
+}
+
+.field.invalid input,
+.field.invalid select,
+.field.invalid textarea {
+    border-color: #ff7185;
+    box-shadow: 0 0 0 2px rgba(255, 113, 133, .16)
+}
+
+.field .error-message {
+    display: block;
+    min-height: 18px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #ffb5bd
+}
+
+.field:not(.invalid) .error-message {
+    display: none
+}
+
+.field select option {
+    background: #170820
+}
+
+.form-note {
+    font-size: 11px;
+    color: #b6a5bd;
+    margin-top: 12px;
+    line-height: 1.6
+}
+
+.sponsor-box {
+    max-width: 1000px;
+    margin: 18px auto;
+    padding: 22px 14px;
+    border-radius: 24px;
+    text-align: center;
+    background: linear-gradient(145deg, rgba(255, 255, 255, .065), rgba(118, 37, 102, .09));
+    border: 1px solid var(--border)
+}
+
+.sponsor-label {
+    display: inline-block;
+    padding: 8px 15px;
+    border-radius: 999px;
+    background: linear-gradient(120deg, #ffe48a, #ffb52e);
+    color: #3a1b08;
+    font-weight: 900;
+    font-size: 10px;
+    letter-spacing: 2px;
+    margin-bottom: 22px
+}
+
+.sponsor-box img {
+    max-width: 100%;
+    max-height: 310px;
+    object-fit: contain;
+    border-radius: 16px;
+    background: #fff
+}
+
+.goldbox img {
+    max-height: 230px
+}
+
+.ending-sponsors {
+    max-width: 1050px;
+    margin: 28px auto 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px
+}
+
+.ending-sponsors .sponsor-box {
+    margin: 0
+}
+
+.ending-sponsors .sponsor-box img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    max-height: 320px;
+    object-fit: contain
+}
+
+.ending-sponsors .goldbox img {
+    max-height: 240px
+}
+
+@media(max-width:700px) {
+    .ending-sponsors {
+        grid-template-columns: 1fr
+    }
+
+    .sponsor-box {
+        padding: 22px 14px
+    }
+}
+
+.final {
+    max-width: 1050px;
+    margin: 30px auto 0;
+    position: relative;
+    overflow: hidden;
+    border-radius: 30px;
+    border: 1px solid rgba(255, 200, 87, .38)
+}
+
+.final img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover
+}
+
+.finalshade {
+    position: absolute;
+    inset: 45% 0 0;
+    background: linear-gradient(transparent, rgba(18, 6, 25, .96));
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    text-align: center;
+    padding: 20px
+}
+
+.finalshade h2 {
+    font-family: "Baloo 2";
+    font-size: clamp(30px, 5vw, 60px)
+}
+
+footer {
+    text-align: center;
+    padding: 32px 18px;
+    border-top: 1px solid rgba(255, 200, 87, .16);
+    color: #c7b7ca
+}
+
+footer strong {
+    display: block;
+    color: var(--gold);
+    margin-bottom: 8px
+}
+
+.toast {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 20px;
+    background: #32133a;
+    border: 1px solid rgba(255, 200, 87, .55);
+    padding: 16px 20px;
+    border-radius: 15px;
+    box-shadow: 0 15px 45px #0008;
+    z-index: 100;
+    display: none;
+    width: min(430px, calc(100vw - 32px));
+    font-size: 13px
+}
+
+@media(max-width:850px) {
+    .hero {
+        grid-template-columns: 1fr;
+        gap: 35px
+    }
+
+    .hero-poster {
+        max-width: 650px
+    }
+
+    .navlinks a:not(.btn) {
+        display: none
+    }
+}
+
+@media(max-width:560px) {
+    section {
+        padding: 66px 20px
+    }
+
+    .hero {
+        min-height: min(780px, 100svh);
+        padding: 54px 22px 58px;
+        gap: 28px
+    }
+
+    .hero h1 {
+        font-size: clamp(48px, 13vw, 60px);
+        line-height: .9
+    }
+
+    .hero h1 small {
+        font-size: .4em
+    }
+
+    .kicker {
+        font-size: 10px;
+        letter-spacing: 2.2px
+    }
+
+    .hero p {
+        font-size: 14px;
+        line-height: 1.7
+    }
+
+    .date {
+        gap: 10px;
+        margin: 20px 0
+    }
+
+    .date strong {
+        font-size: 17px
+    }
+
+    .date span {
+        font-size: 10px;
+        letter-spacing: 2px
+    }
+
+    .actions {
+        display: grid;
+        grid-template-columns: 1fr
+    }
+
+    .actions .btn {
+        width: 100%;
+        padding: 13px 16px
+    }
+
+    .section-title {
+        margin-bottom: 30px
+    }
+
+    .section-title h2 {
+        font-size: clamp(34px, 9vw, 42px)
+    }
+
+    .section-title .tag {
+        font-size: 10px;
+        letter-spacing: 2px
+    }
+
+    .banner {
+        margin: 8px 12px 0;
+        padding: 42px 22px
+    }
+
+    .banner h2 {
+        font-size: clamp(34px, 9vw, 42px);
+        line-height: 1.08
+    }
+
+    .formbox {
+        padding: 20px 14px
+    }
+
+    .nav {
+        padding: 11px 14px
+    }
+
+    .logo {
+        font-size: 11px;
+        letter-spacing: .4px;
+        white-space: nowrap
+    }
+
+    .navlinks .btn {
+        padding: 10px 13px;
+        font-size: 10px;
+        white-space: nowrap
+    }
+
+    .card h3 {
+        font-size: 23px
+    }
+
+    .prize h3 {
+        font-size: 31px
+    }
+
+    .toast {
+        bottom: 14px
+    }
+}
+
+@media(min-width:700px) {
+    body {
+        margin-block: 24px;
+        min-height: calc(100vh - 48px);
+        border-radius: 24px
+    }
+
+    .nav {
+        border-radius: 24px 24px 0 0
+    }
+}
+
+.admin-home-link {
+    color: var(--gold);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px
+}
+
+.admin-main {
+    padding: 36px 20px 64px
+}
+
+.admin-header {
+    margin-bottom: 26px;
+    text-align: center
+}
+
+.admin-header .tag {
+    color: var(--gold);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px
+}
+
+.admin-header h1 {
+    margin: 8px 0;
+    font-family: "Baloo 2";
+    font-size: 42px;
+    line-height: 1
+}
+
+.admin-header p {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6
+}
+
+.admin-login {
+    display: grid;
+    gap: 12px;
+    padding: 20px 16px;
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    background: linear-gradient(145deg, rgba(255, 255, 255, .065), rgba(118, 37, 102, .09))
+}
+
+.admin-login label {
+    color: #ddd;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .6px
+}
+
+.admin-login input {
+    width: 100%;
+    min-width: 0;
+    padding: 13px 12px;
+    border: 1px solid rgba(255, 255, 255, .17);
+    border-radius: 12px;
+    outline: 0;
+    background: #1b0c25;
+    color: #fff;
+    font: inherit;
+    font-size: 16px
+}
+
+.admin-login input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(255, 200, 87, .12)
+}
+
+.admin-login .btn,
+.admin-load-more {
+    width: 100%;
+    min-height: 46px;
+    font-size: 12px
+}
+
+.admin-status {
+    min-height: 18px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.5
+}
+
+.admin-status.error {
+    color: #ffb5bd
+}
+
+.admin-results {
+    margin-top: 28px
+}
+
+.admin-results-header,
+.registration-card-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px
+}
+
+.admin-results-header {
+    margin-bottom: 14px;
+    flex-wrap: wrap
+}
+
+.admin-results-header h2 {
+    font-family: "Baloo 2";
+    font-size: 24px
+}
+
+.admin-subheading {
+    margin: 20px 0 12px;
+    color: var(--gold);
+    font-family: "Baloo 2";
+    font-size: 20px
+}
+
+.admin-section-heading {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin: 20px 0 8px
+}
+
+.admin-section-heading .admin-subheading {
+    margin: 0
+}
+
+.admin-export {
+    flex: none;
+    padding: 9px 12px;
+    border: 1px solid rgba(255, 200, 87, .45);
+    border-radius: 999px;
+    background: rgba(255, 200, 87, .08);
+    color: var(--gold);
+    font: inherit;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .3px;
+    cursor: pointer
+}
+
+.admin-export:hover:not(:disabled) {
+    background: rgba(255, 200, 87, .16)
+}
+
+.admin-export:disabled {
+    cursor: wait;
+    opacity: .65
+}
+
+.admin-results > .admin-status,
+.admin-dataset > .admin-status {
+    margin: 5px 0 8px
+}
+
+.admin-dataset {
+    margin-top: 28px;
+    padding-top: 22px;
+    border-top: 1px solid var(--border)
+}
+
+.lucky-draw-admin {
+    display: grid;
+    gap: 10px;
+    margin-top: 24px;
+    padding: 18px 16px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: linear-gradient(145deg, rgba(255, 255, 255, .045), rgba(118, 37, 102, .07))
+}
+
+.lucky-draw-admin h3 {
+    color: var(--gold);
+    font-family: "Baloo 2";
+    font-size: 20px
+}
+
+.lucky-draw-admin label {
+    color: #ddd;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .6px
+}
+
+.lucky-draw-admin input {
+    width: 100%;
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, .17);
+    border-radius: 12px;
+    outline: 0;
+    background: #1b0c25;
+    color: #fff;
+    font: inherit;
+    font-size: 16px
+}
+
+.lucky-draw-admin input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(255, 200, 87, .12)
+}
+
+.lucky-draw-admin-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px
+}
+
+.lucky-draw-admin-actions .btn {
+    min-height: 42px;
+    padding: 10px 14px;
+    font-size: 10px
+}
+
+.lucky-draw-admin-actions button:disabled {
+    cursor: wait;
+    opacity: .65
+}
+
+.admin-logout {
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .06);
+    color: var(--cream);
+    font: inherit;
+    font-size: 10px;
+    font-weight: 800
+}
+
+.registration-list {
+    display: grid;
+    gap: 12px
+}
+
+.registration-card {
+    min-width: 0;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: linear-gradient(145deg, rgba(255, 255, 255, .065), rgba(118, 37, 102, .09))
+}
+
+.registration-card-heading {
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 200, 87, .14)
+}
+
+.registration-card-heading h3 {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    color: var(--gold);
+    font-family: "Baloo 2";
+    font-size: 21px;
+    line-height: 1.2
+}
+
+.registration-card-heading span {
+    flex: none;
+    color: var(--muted);
+    font-size: 11px
+}
+
+.registration-delete {
+    margin-top: 14px;
+    padding: 9px 12px;
+    border: 1px solid rgba(255, 113, 133, .45);
+    border-radius: 999px;
+    background: rgba(255, 113, 133, .1);
+    color: #ffb5bd;
+    font: inherit;
+    font-size: 10px;
+    font-weight: 800;
+    cursor: pointer
+}
+
+.registration-delete:hover:not(:disabled) {
+    background: rgba(255, 113, 133, .2)
+}
+
+.registration-delete:disabled {
+    cursor: wait;
+    opacity: .65
+}
+
+.registration-details {
+    display: grid;
+    gap: 9px;
+    margin-top: 12px
+}
+
+.registration-details > div {
+    display: grid;
+    grid-template-columns: 95px minmax(0, 1fr);
+    gap: 8px;
+    font-size: 12px;
+    line-height: 1.45
+}
+
+.registration-details dt {
+    color: var(--muted)
+}
+
+.registration-details dd {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    color: #fff
+}
+
+.admin-load-more {
+    margin-top: 16px
+}
+
+.admin-login[hidden],
+.admin-results[hidden],
+.admin-load-more[hidden] {
+    display: none
+}
+
+.lucky-form {
+    display: grid;
+    gap: 2px;
+    max-width: 560px
+}
+
+.lucky-form .btn {
+    width: 100%;
+    min-height: 48px;
+    font-size: 12px
+}
+
+.whatsapp-form-link {
+    margin-top: 10px
+}
+
+.lucky-form .btn:disabled {
+    cursor: wait;
+    opacity: .7
+}
+
+.lucky-status {
+    min-height: 18px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.5
+}
+
+.lucky-status.error {
+    color: #ffb5bd
+}
